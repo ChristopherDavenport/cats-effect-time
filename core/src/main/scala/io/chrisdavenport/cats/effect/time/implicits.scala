@@ -1,6 +1,5 @@
 package io.chrisdavenport.cats.effect.time
 
-import cats._
 import cats.effect.Clock
 import java.time._
 
@@ -16,9 +15,9 @@ import java.time._
  * of which I know have a Functor of that type as well.
  **/
 object implicits {
-  implicit class ClockOps[F[_]: Functor](private val c: Clock[F]){
-    private implicit val C = c
-    private val J = JavaTime[F]
+  implicit class ClockOps[F[_]](private val c: Clock[F]) extends AnyVal{
+    implicit def C = c
+    implicit def J = JavaTime[F]
 
     /**
      * Get the current Instant with millisecond precision

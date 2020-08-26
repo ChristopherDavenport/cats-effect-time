@@ -3,7 +3,6 @@ package io.chrisdavenport.cats.effect.time
 import cats._
 import cats.implicits._
 import cats.effect.Clock
-import scala.concurrent.duration._
 import java.time._
 
 /**
@@ -23,7 +22,7 @@ import java.time._
  **/
 @scala.annotation.implicitNotFound("""Cannot find implicit value for JavaTime[${F}].
 Building this implicit value depends on having an implicit
-Clock[${F}] and Functor[${F}] or some equivalent type.""")
+Clock[${F}] or some equivalent type.""")
 trait JavaTime[F[_]]{
   /**
    * Get the current Instant with millisecond precision
@@ -99,14 +98,14 @@ object JavaTime {
   
   def apply[F[_]](implicit ev: JavaTime[F]): JavaTime[F] = ev
 
-  implicit def fromClock[F[_]](implicit C: Clock[F], F: Functor[F]): JavaTime[F] =
-    new ClockJavaTime[F](C)(F)
+  implicit def fromClock[F[_]](implicit C: Clock[F]): JavaTime[F] =
+    new ClockJavaTime[F]
 
   // Starting on January 1, 10000, this will throw an exception.
   // The author intends to leave this problem for future generations.
-  private class ClockJavaTime[F[_]: Functor](private val c: Clock[F]) extends JavaTime[F]{
+  private class ClockJavaTime[F[_]: Clock] extends JavaTime[F]{
     def getInstant: F[Instant] = 
-      c.realTime(MILLISECONDS).map(Instant.ofEpochMilli(_))
+      Clock[F].realTime.map(f => Instant.ofEpochMilli(f.toMillis))
     
     def getLocalDate(zone: ZoneId): F[LocalDate] =  
       getLocalDateTime(zone).map(_.toLocalDate)

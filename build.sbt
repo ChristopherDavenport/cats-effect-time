@@ -22,20 +22,20 @@ lazy val contributors = Seq(
   "ChristopherDavenport" -> "Christopher Davenport"
 )
 
-val catsV = "2.1.1"
-val catsEffectV = "2.1.4"
+val catsEffectV = "3.0-f5eba3c"
 
-val specs2V = "4.8.3"
+val specs2V = "4.10.3"
 
-val kindProjectorV = "0.10.3"
+val kindProjectorV = "0.11.0"
+
 val betterMonadicForV = "0.3.1"
 
 // General Settings
 lazy val commonSettings = Seq(
   organization := "io.chrisdavenport",
 
-  scalaVersion := "2.13.0",
-  crossScalaVersions := Seq(scalaVersion.value, "2.12.10"),
+  scalaVersion := "2.13.2",
+  crossScalaVersions := Seq(scalaVersion.value, "2.12.12"),
 
   scalacOptions in (Compile, doc) ++= Seq(
       "-groups",
@@ -43,12 +43,12 @@ lazy val commonSettings = Seq(
       "-doc-source-url", "https://github.com/ChristopherDavenport/cats-effect-time/blob/v" + version.value + "€{FILE_PATH}.scala"
   ),
 
-  addCompilerPlugin("org.typelevel" % "kind-projector" % kindProjectorV cross CrossVersion.binary),
+  addCompilerPlugin("org.typelevel" % "kind-projector" % kindProjectorV cross CrossVersion.full),
   addCompilerPlugin("com.olegpy"    %% "better-monadic-for" % betterMonadicForV),
   libraryDependencies ++= Seq(
-    "org.typelevel"               %% "cats-core"                  % catsV,
     "org.typelevel"               %% "cats-effect"                % catsEffectV,
     "org.typelevel"               %% "cats-effect-laws"           % catsEffectV   % Test,
+    "org.typelevel"               %% "cats-effect-testkit"        % catsEffectV   % Test,
 
     "org.specs2"                  %% "specs2-core"                % specs2V       % Test,
     "org.specs2"                  %% "specs2-scalacheck"          % specs2V       % Test
