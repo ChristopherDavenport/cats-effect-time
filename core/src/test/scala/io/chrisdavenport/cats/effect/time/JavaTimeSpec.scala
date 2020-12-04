@@ -3,8 +3,9 @@ package io.chrisdavenport.cats.effect.time
 import org.specs2._
 import cats.effect._
 
-import cats.effect.laws.util.TestContext
-import java.time._
+import cats.effect.testkit._
+import java.time.{Clock => _, _}
+import cats.effect.unsafe.implicits.global
 
 object JavaTimeSpec extends mutable.Specification {
 
@@ -23,31 +24,24 @@ object JavaTimeSpec extends mutable.Specification {
 
   "JavaTime" should {
     "getInstant the epoch in a test context" in {
-      implicit val ec = TestContext()
-      implicit val T = ec.timer[IO]
-      val test = JavaTime[IO].getInstant
-      test.unsafeRunSync() must_=== Instant.EPOCH
+
+      val test = JavaTime[TimeT[IO, *]].getInstant
+      TimeT.run(test).unsafeRunSync must_=== Instant.EPOCH
     }
 
     "getLocalDate the epoch in a test context" in {
-      implicit val ec = TestContext()
-      implicit val T = ec.timer[IO]
-      val test = JavaTime[IO].getLocalDate(ZoneOffset.UTC)
-      test.unsafeRunSync() must_=== LocalDate.ofEpochDay(0)
+      val test = JavaTime[TimeT[IO, *]].getLocalDate(ZoneOffset.UTC)
+      TimeT.run(test).unsafeRunSync() must_=== LocalDate.ofEpochDay(0)
     }
 
     "getLocalDateUTC the epoch in a test context" in {
-      implicit val ec = TestContext()
-      implicit val T = ec.timer[IO]
-      val test = JavaTime[IO].getLocalDateUTC
-      test.unsafeRunSync() must_=== LocalDate.ofEpochDay(0)
+      val test = JavaTime[TimeT[IO, *]].getLocalDateUTC
+      TimeT.run(test).unsafeRunSync() must_=== LocalDate.ofEpochDay(0)
     }
 
     "get the epoch year from test context" in {
-      implicit val ec = TestContext()
-      implicit val T = ec.timer[IO]
-      val test = JavaTime[IO].getYearUTC
-      test.unsafeRunSync() must_=== Year.of(1970)
+      val test = JavaTime[TimeT[IO, *]].getYearUTC
+      TimeT.run(test).unsafeRunSync() must_=== Year.of(1970)
     }
   }
 
